@@ -1,12 +1,17 @@
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroBanner from "@/components/HeroBanner";
-import heroAbout from "@/assets/hero-about.jpg";
-import teachingImg from "@/assets/teaching.jpg";
+import heroAbout from "@/assets/etu.jpg";
+import teachingImg from "@/assets/nine.jpg";
+import teachingImg1 from "@/assets/ten.jpg";
+import teachingImg2 from "@/assets/eleven.jpg";
+import teachingImg3 from "@/assets/nine.jpg";
+
+import { i } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
+
 
 const TeachingMethods = () => (
   <div className="min-h-screen flex flex-col">
-    <Navbar />
+    
     <HeroBanner title="Our Teaching Methods" image={heroAbout} subtitle="Find Out More" />
 
     <div className="container py-12 space-y-12">
@@ -21,13 +26,13 @@ const TeachingMethods = () => (
       {/* 3 Pillars */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {[
-          { num: "1", text: "We believe that every child have their own way of learning and that we should cater to their learning capabilities." },
-          { num: "2", text: "We aim to provide to all standard holistic education to mould them into future leaders and achieve academic success." },
-          { num: "3", text: "We aim to make the learning experience as fun and engaging as much as possible." },
+          { num: "1", text: "We believe that every child have their own way of learning and that we should cater to their learning capabilities." ,image: teachingImg1},
+          { num: "2", text: "We aim to provide to all standard holistic education to mould them into future leaders and achieve academic success." ,image: teachingImg2},
+          { num: "3", text: "We aim to make the learning experience as fun and engaging as much as possible." ,image: teachingImg3},
         ].map((p) => (
           <div key={p.num} className="text-center">
             <div className="w-24 h-24 rounded-full bg-teal-light mx-auto mb-4 flex items-center justify-center overflow-hidden">
-              <img src={teachingImg} alt={`Pillar ${p.num}`} className="w-full h-full object-cover" />
+              <img src={p.image} alt={`Pillar ${p.num}`} className="w-full h-full object-cover" />
             </div>
             <p className="text-2xl font-heading font-bold text-teal-dark mb-2">{p.num}</p>
             <p className="text-xs text-muted-foreground">{p.text}</p>
@@ -44,7 +49,7 @@ const TeachingMethods = () => (
           </p>
           <div className="flex justify-center">
             <div className="w-48 h-48 rounded-full bg-accent/20 flex items-center justify-center text-xs text-center text-accent font-semibold p-4">
-              Excellence · Study Skills · Confidence · Motivation · Growth Mindset · Time Management · Problem Solving · Smart Learning · Academic Balance
+            <img src="twele.png"></img>
             </div>
           </div>
         </div>

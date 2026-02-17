@@ -16,22 +16,31 @@ const UpdateBanner = () => {
     const unsub = onValue(updatesRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) return setUpdates([]);
+
       const now = Date.now();
       const active = Object.values(data as Record<string, Update>).filter(
         (u) => u.expiresAt > now
       );
+
       setUpdates(active);
     });
+
     return () => unsub();
   }, []);
 
-  if (updates.length === 0) return null;
+  if (updates.length === 0) {
+    return (
+      <p className="text-muted-foreground text-sm italic">
+        No announcements today.
+      </p>
+    );
+  }
 
   return (
-    <div className="bg-teal-dark text-accent-foreground py-2 overflow-hidden">
+    <div className="bg-gradient-to-r from-teal-600 to-teal-800 text-white rounded-lg py-3 px-6 shadow-lg w-full overflow-hidden">
       <div className="animate-marquee whitespace-nowrap">
         {updates.map((u, i) => (
-          <span key={i} className="mx-8 text-sm font-medium">
+          <span key={i} className="mx-8 font-semibold">
             📢 {u.message}
           </span>
         ))}

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { ref, onValue, push } from "firebase/database";
+import { ref, onValue, push ,remove,update} from "firebase/database";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from "firebase/auth";
 import { db, auth } from "@/firebase";
-import Navbar from "@/components/Navbar";
 
 interface Registration {
   id: string;
@@ -11,11 +10,26 @@ interface Registration {
   phone: string;
   program: string;
   createdAt: number;
+  parentFirstName: string;
+  location: string;
+  educationLevel: string;
 }
 
-const ADMIN_EMAIL = "admin@vismayaeducation.com";
+interface UpdateItem {
+  id: string;
+  message: string;
+  createdAt: number;
+  expiresAt: number;
+}
 
+
+
+const ADMIN_EMAIL = "achieverstuition.centre2018@gmail.com";
 const Admin = () => {
+ const [updates, setUpdates] = useState<UpdateItem[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
+
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +38,7 @@ const Admin = () => {
   const [updateMsg, setUpdateMsg] = useState("");
   const [posting, setPosting] = useState(false);
 
+  
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       if (u && u.email === ADMIN_EMAIL) setUser(u);
@@ -44,7 +59,44 @@ const Admin = () => {
     });
     return () => unsub();
   }, [user]);
+  useEffect(() => {
+  if (!user) return;
 
+  const updatesRef = ref(db, "updates");
+
+  const unsub = onValue(updatesRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return setUpdates([]);
+
+    const list = Object.entries(data).map(([id, val]: [string, any]) => ({
+      id,
+      ...val,
+    }));
+
+    list.sort((a, b) => b.createdAt - a.createdAt);
+    setUpdates(list);
+  });
+
+  return () => unsub();
+}, [user]);
+const handleDelete = async (id: string) => {
+  await remove(ref(db, `updates/${id}`));
+};
+const handleEdit = (u: UpdateItem) => {
+  setEditingId(u.id);
+  setEditText(u.message);
+};
+
+const handleSaveEdit = async () => {
+  if (!editingId) return;
+
+  await update(ref(db, `updates/${editingId}`), {
+    message: editText,
+  });
+
+  setEditingId(null);
+  setEditText("");
+};
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
@@ -71,7 +123,6 @@ const Admin = () => {
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <form onSubmit={handleLogin} className="bg-card border border-border rounded-xl p-8 w-full max-w-sm shadow-md space-y-4">
             <h2 className="text-xl font-heading font-bold text-center">Admin Login</h2>
@@ -92,8 +143,7 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <div className="container py-8 flex-1">
+      <div className="container py-8 flex-1"><br></br>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-heading font-bold">Admin Dashboard</h2>
           <button onClick={() => signOut(auth)} className="text-sm text-destructive hover:underline">Logout</button>
@@ -112,6 +162,60 @@ const Admin = () => {
           </div>
           <p className="text-xs text-muted-foreground mt-2">Update will expire after 24 hours.</p>
         </div>
+        {/* Existing Updates */}
+<div className="bg-card border border-border rounded-xl p-6 mb-8">
+  <h3 className="font-bold text-sm mb-4">Posted Updates</h3>
+
+  {updates.length === 0 && (
+    <p className="text-sm text-muted-foreground">No updates posted yet.</p>
+  )}
+
+  <div className="space-y-4">
+    {updates.map((u) => (
+      <div
+        key={u.id}
+        className="border border-border rounded-lg p-4 flex justify-between items-start"
+      >
+        {editingId === u.id ? (
+          <div className="flex-1 mr-4">
+            <input
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              className="w-full rounded-lg bg-muted px-3 py-2 text-sm"
+            />
+          </div>
+        ) : (
+          <p className="text-sm flex-1 mr-4">{u.message}</p>
+        )}
+
+        <div className="flex gap-2">
+          {editingId === u.id ? (
+            <button
+              onClick={handleSaveEdit}
+              className="text-xs bg-primary text-white px-3 py-1 rounded"
+            >
+              Save
+            </button>
+          ) : (
+            <button
+              onClick={() => handleEdit(u)}
+              className="text-xs bg-secondary px-3 py-1 rounded"
+            >
+              Edit
+            </button>
+          )}
+
+          <button
+            onClick={() => handleDelete(u.id)}
+            className="text-xs bg-destructive text-white px-3 py-1 rounded"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
         {/* Registrations Table */}
         <div className="bg-card border border-border rounded-xl overflow-hidden">
@@ -126,16 +230,23 @@ const Admin = () => {
                   <th className="text-left px-4 py-3 font-semibold">Email</th>
                   <th className="text-left px-4 py-3 font-semibold">Phone</th>
                   <th className="text-left px-4 py-3 font-semibold">Program</th>
+                  <th className="text-left px-4 py-3 font-semibold">Parent Name</th>
+                  <th className="text-left px-4 py-3 font-semibold">Location</th>
+                  <th className="text-left px-4 py-3 font-semibold">class</th>
                   <th className="text-left px-4 py-3 font-semibold">Date</th>
                 </tr>
               </thead>
               <tbody>
+
                 {registrations.map((r) => (
                   <tr key={r.id} className="border-t border-border hover:bg-muted/50 transition-colors">
                     <td className="px-4 py-3">{r.name}</td>
                     <td className="px-4 py-3">{r.email}</td>
                     <td className="px-4 py-3">{r.phone}</td>
                     <td className="px-4 py-3 capitalize">{r.program}</td>
+                    <td className="px-4 py-3">{r.parentFirstName}</td>
+                    <td className="px-4 py-3">{r.location}</td>
+                    <td className="px-4 py-3">{r.educationLevel}</td>
                     <td className="px-4 py-3 text-muted-foreground">{new Date(r.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))}

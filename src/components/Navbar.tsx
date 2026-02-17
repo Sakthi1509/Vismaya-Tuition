@@ -15,31 +15,42 @@ const Navbar = () => {
   const location = useLocation();
 
   return (
-    <header className="w-full bg-header-bg">
-      <div className="text-center py-3">
-        <h1 className="text-lg font-bold tracking-wide text-foreground">Vismaya Education</h1>
-        <p className="text-sm font-semibold text-foreground">Achievers Tuition Centre</p>
+   <header className="fixed top-0 left-0 w-full bg-header-bg border-b border-border z-40 shadow-sm">
+      {/* Branding */}
+      <div className="text-center py-4">
+        <h1 className="text-xl font-bold tracking-wide text-foreground">
+          Vismaya Education
+        </h1>
+        <p className="text-sm font-semibold text-muted-foreground">
+          Achievers Tuition Centre
+        </p>
       </div>
-      <nav className="flex items-center justify-center px-4 pb-3 relative">
-        <div className="hidden md:flex items-center gap-1 bg-card rounded-full px-2 py-1 border border-border shadow-sm">
+
+      {/* Navigation */}
+      <nav className="flex items-center justify-center px-4 pb-4 relative">
+        
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center gap-2 bg-card rounded-full px-3 py-2 border border-border shadow-sm">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={`nav-link ${location.pathname === link.to ? "nav-link-active" : ""}`}
+              className={`px-4 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
+                location.pathname === link.to
+                  ? "bg-primary text-white"
+                  : "text-foreground hover:bg-secondary"
+              }`}
             >
               {link.label}
             </Link>
           ))}
         </div>
-        <button
-          className="md:hidden absolute right-4 top-0 p-2 text-foreground"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
+
+        
+
+        {/* Mobile Dropdown */}
         {open && (
-          <div className="absolute top-full left-0 right-0 bg-card border-b border-border shadow-lg z-50 md:hidden">
+          <div className="absolute top-full left-0 right-0 bg-card border-t border-border shadow-md md:hidden z-50">
             {navLinks.map((link) => (
               <Link
                 key={link.to}

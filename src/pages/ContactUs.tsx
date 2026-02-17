@@ -1,12 +1,10 @@
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroBanner from "@/components/HeroBanner";
-import heroAbout from "@/assets/hero-about.jpg";
+import heroAbout from "@/assets/contactus.jpg";
 import { Phone, Mail, Clock } from "lucide-react";
 
 const ContactUs = () => (
   <div className="min-h-screen flex flex-col">
-    <Navbar />
     <HeroBanner title="Contact Us" image={heroAbout} subtitle="Scroll Down" />
 
     <div className="container py-12 space-y-12 text-center">
@@ -39,7 +37,7 @@ const ContactUs = () => (
         <h3 className="font-bold text-base flex items-center justify-center gap-2">
           <Mail size={18} className="text-accent" /> Email
         </h3>
-        <p className="text-accent font-medium">enquiry@vismayaeducation.com</p>
+        <p className="text-accent font-medium">achieverstuition.centre2018@gmail.com</p>
       </div>
 
       {/* Find Us */}

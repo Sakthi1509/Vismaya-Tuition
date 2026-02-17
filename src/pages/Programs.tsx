@@ -1,11 +1,9 @@
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroBanner from "@/components/HeroBanner";
-import heroAbout from "@/assets/hero-about.jpg";
+import heroAbout from "@/assets/program.jpg";
 
 const Programs = () => (
   <div className="min-h-screen flex flex-col">
-    <Navbar />
     <HeroBanner title="Types of Programs" image={heroAbout} subtitle="Find Out More" />
 
     <div className="container py-12 space-y-12">

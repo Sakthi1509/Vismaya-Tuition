@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { ref, push } from "firebase/database";
 import { db } from "@/firebase";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroBanner from "@/components/HeroBanner";
-import heroAbout from "@/assets/hero-about.jpg";
+import heroAbout from "@/assets/applynow.jpg";
+
+
+
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -33,7 +35,7 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.agreed || !form.name || !form.email || !form.phone || !form.program) return;
+    if (!form.agreed || !form.name || !form.email || !form.phone || !form.program || !form.location || !form.educationLevel) return;
     setLoading(true);
     try {
       await push(ref(db, "registrations"), {
@@ -51,7 +53,6 @@ const Register = () => {
   if (submitted) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center p-8">
             <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -68,7 +69,6 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
       <HeroBanner title="Apply Now" image={heroAbout} />
 
       <div className="container py-8">
@@ -76,31 +76,32 @@ const Register = () => {
 
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-card rounded-2xl p-6 md:p-8 shadow-sm border border-border space-y-5">
           <p className="text-sm font-medium text-foreground">Welcome to Vismaya Education</p>
+           <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Student Name *</label>
 
-          <input name="name" value={form.name} onChange={handleChange} placeholder="Student name" required
+          <input name="name" value={form.name} onChange={handleChange} placeholder="Enter Student name" required
             className="w-full rounded-full bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary" />
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Parent's First Name</label>
-              <input name="parentFirstName" value={form.parentFirstName} onChange={handleChange}
+              <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Parent's First Name *</label>
+              <input name="parentFirstName" value={form.parentFirstName} onChange={handleChange} required placeholder="Enter Parent's First Name"
                 className="w-full rounded-full bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary" />
             </div>
             <div>
               <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Parent's Last Name</label>
-              <input name="parentLastName" value={form.parentLastName} onChange={handleChange}
+              <input name="parentLastName" value={form.parentLastName} onChange={handleChange} placeholder="Enter Parent's First Name"
                 className="w-full rounded-full bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary" />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Email</label>
-              <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="Email address" required
+              <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Email *</label>
+              <input name="email" type="email" value={form.email} onChange={handleChange} placeholder=" Enter Email address" required
                 className="w-full rounded-full bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary" />
             </div>
             <div>
-              <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Phone Number</label>
+              <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Phone Number *</label>
               <input name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="10-digit phone number" required
                 className="w-full rounded-full bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary" />
             </div>
@@ -109,19 +110,19 @@ const Register = () => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Child's First Name</label>
-              <input name="childFirstName" value={form.childFirstName} onChange={handleChange}
+              <input name="childFirstName" value={form.childFirstName} onChange={handleChange} placeholder="Enter Child FirstName"
                 className="w-full rounded-full bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary" />
             </div>
             <div>
               <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Child's Last Name</label>
-              <input name="childLastName" value={form.childLastName} onChange={handleChange}
+              <input name="childLastName" value={form.childLastName} onChange={handleChange} placeholder="Enter Child LastName"
                 className="w-full rounded-full bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary" />
             </div>
           </div>
 
           <div>
-            <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Child's Education Level</label>
-            <select name="educationLevel" value={form.educationLevel} onChange={handleChange}
+            <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Child's Education Level *</label>
+            <select name="educationLevel" value={form.educationLevel} onChange={handleChange} required
               className="w-full rounded-full bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary">
               <option value="">-Please Select-</option>
               <option value="preschool">Preschool</option>
@@ -132,23 +133,30 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Subject to Be Enrolled In</label>
+            <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Subject to Be Enrolled In *</label>
             <select name="program" value={form.program} onChange={handleChange} required
               className="w-full rounded-full bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary">
               <option value="">-Please Select-</option>
+              <option value="tamil">Tamil</option>
+              <option value="english">English</option>
               <option value="mathematics">Mathematics</option>
               <option value="science">Science</option>
-              <option value="english">English</option>
+              <option value="social Science">Social Science</option>
+              <option value="physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Biology">Biology</option>
+              <option value="Computer science">Computer Science</option>
               <option value="all-subjects">All Subjects</option>
             </select>
           </div>
 
           <div>
-            <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Location</label>
-            <select name="location" value={form.location} onChange={handleChange}
+            <label className="text-xs font-semibold uppercase text-muted-foreground mb-1 block">Location *</label>
+            <select name="location" value={form.location} onChange={handleChange} required
               className="w-full rounded-full bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary">
               <option value="">-Please Select-</option>
               <option value="tirumangalam">Tirumangalam</option>
+              <option value="madurai">Madurai</option>
               <option value="other">Other</option>
             </select>
           </div>
@@ -175,3 +183,4 @@ const Register = () => {
 };
 
 export default Register;
+

@@ -4,14 +4,15 @@ import { getAuth } from "firebase/auth";
 
 // TODO: Replace with your actual Firebase config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
-};
+    apiKey: "AIzaSyByQ57ezicJv371BmujkJe2rqIJu_Lj1ek",
+    authDomain: "vismayaachievers.firebaseapp.com",
+    databaseURL: "https://vismayaachievers-default-rtdb.firebaseio.com",
+    projectId: "vismayaachievers",
+    storageBucket: "vismayaachievers.firebasestorage.app",
+    messagingSenderId: "843035743857",
+    appId: "1:843035743857:web:ce43afee64804075baedd0",
+    measurementId: "G-ZWPXY51XWS"
+  };
 
 const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);

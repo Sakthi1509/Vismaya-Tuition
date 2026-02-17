@@ -1,15 +1,15 @@
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroBanner from "@/components/HeroBanner";
 import UpdateBanner from "@/components/UpdateBanner";
 import { Link } from "react-router-dom";
 import { GraduationCap, Users, Star } from "lucide-react";
-import heroHome from "@/assets/hero-home.jpg";
-import teachingImg from "@/assets/teaching.jpg";
+import heroHome from "@/assets/one.jpg";
+import teachingImg from "@/assets/two.jpg";
+import teachinggImg from "@/assets/three.jpg";
+
 
 const Home = () => (
   <div className="min-h-screen flex flex-col">
-    <Navbar />
     <UpdateBanner />
 
     <HeroBanner title="Home" image={heroHome} subtitle="Scroll Down" />
@@ -33,10 +33,10 @@ const Home = () => (
 
     {/* Placeholder announcement area */}
     <section className="container pb-8">
-      <div className="bg-teal-light rounded-xl h-48 md:h-64 flex items-center justify-center">
-        <p className="text-muted-foreground text-sm italic">Announcements & Updates</p>
-      </div>
-    </section>
+  <div className="bg-teal-light rounded-xl p-8 flex items-center justify-center">
+    <UpdateBanner />
+  </div>
+</section>
 
     {/* Achievements */}
     <section className="container pb-12">
@@ -74,7 +74,7 @@ const Home = () => (
     {/* Teaching Methods */}
     <section className="container pb-12">
       <div className="grid md:grid-cols-2 gap-8 items-center">
-        <img src={teachingImg} alt="Our teaching" className="rounded-lg w-full h-56 object-cover shadow-md" />
+        <img src={teachinggImg} alt="Our teaching" className="rounded-lg w-full h-56 object-cover shadow-md" />
         <div className="bg-secondary rounded-lg p-6">
           <h3 className="text-xl font-heading font-bold mb-3">Our Teaching Methods</h3>
           <p className="text-sm leading-relaxed text-secondary-foreground">
