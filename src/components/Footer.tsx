@@ -50,13 +50,13 @@ const Footer = () => (
   </a>
 
   <a
-    href="https://facebook.com/..."
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-gray-700 hover:text-blue-600 transition-colors duration-300"
-  >
-    <i className="bi bi-facebook"></i>
-  </a>
+  href="https://youtube.com/@vismayaeducation?si=6-HpRpBWmL7uIlqg"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-gray-700 hover:text-red-600 transition-colors duration-300"
+>
+  <i className="bi bi-youtube"></i>
+</a>
 </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
