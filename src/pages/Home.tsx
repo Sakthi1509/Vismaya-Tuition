@@ -10,7 +10,6 @@ import teachinggImg from "@/assets/three.jpg";
 
 const Home = () => (
   <div className="min-h-screen flex flex-col">
-    <UpdateBanner />
 
     <HeroBanner title="Home" image={heroHome} subtitle="Scroll Down" />
 
