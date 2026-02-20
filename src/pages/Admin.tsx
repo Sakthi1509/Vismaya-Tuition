@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ref, onValue, push ,remove,update} from "firebase/database";
+import { ref, onValue, push, remove, update } from "firebase/database";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from "firebase/auth";
 import { db, auth } from "@/firebase";
 
@@ -22,11 +22,9 @@ interface UpdateItem {
   expiresAt: number;
 }
 
-
-
 const ADMIN_EMAIL = "achieverstuition.centre2018@gmail.com";
 const Admin = () => {
- const [updates, setUpdates] = useState<UpdateItem[]>([]);
+  const [updates, setUpdates] = useState<UpdateItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
 
@@ -36,9 +34,12 @@ const Admin = () => {
   const [loginError, setLoginError] = useState("");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [updateMsg, setUpdateMsg] = useState("");
+  const [descriptions, setDescriptions] = useState<any[]>([]);
+  const [editingDescId, setEditingDescId] = useState<string | null>(null);
+  const [editDescText, setEditDescText] = useState("");
   const [posting, setPosting] = useState(false);
+  const [descriptionMsg, setDescriptionMsg] = useState("");
 
-  
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       if (u && u.email === ADMIN_EMAIL) setUser(u);
@@ -60,43 +61,43 @@ const Admin = () => {
     return () => unsub();
   }, [user]);
   useEffect(() => {
-  if (!user) return;
+    if (!user) return;
 
-  const updatesRef = ref(db, "updates");
+    const updatesRef = ref(db, "updates");
 
-  const unsub = onValue(updatesRef, (snapshot) => {
-    const data = snapshot.val();
-    if (!data) return setUpdates([]);
+    const unsub = onValue(updatesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return setUpdates([]);
 
-    const list = Object.entries(data).map(([id, val]: [string, any]) => ({
-      id,
-      ...val,
-    }));
+      const list = Object.entries(data).map(([id, val]: [string, any]) => ({
+        id,
+        ...val,
+      }));
 
-    list.sort((a, b) => b.createdAt - a.createdAt);
-    setUpdates(list);
-  });
+      list.sort((a, b) => b.createdAt - a.createdAt);
+      setUpdates(list);
+    });
 
-  return () => unsub();
-}, [user]);
-const handleDelete = async (id: string) => {
-  await remove(ref(db, `updates/${id}`));
-};
-const handleEdit = (u: UpdateItem) => {
-  setEditingId(u.id);
-  setEditText(u.message);
-};
+    return () => unsub();
+  }, [user]);
+  const handleDelete = async (id: string) => {
+    await remove(ref(db, `updates/${id}`));
+  };
+  const handleEdit = (u: UpdateItem) => {
+    setEditingId(u.id);
+    setEditText(u.message);
+  };
 
-const handleSaveEdit = async () => {
-  if (!editingId) return;
+  const handleSaveEdit = async () => {
+    if (!editingId) return;
 
-  await update(ref(db, `updates/${editingId}`), {
-    message: editText,
-  });
+    await update(ref(db, `updates/${editingId}`), {
+      message: editText,
+    });
 
-  setEditingId(null);
-  setEditText("");
-};
+    setEditingId(null);
+    setEditText("");
+  };
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
@@ -107,6 +108,56 @@ const handleSaveEdit = async () => {
     }
   };
 
+  useEffect(() => {
+    if (!user) return;
+
+    const descRef = ref(db, "descriptions");
+
+    const unsub = onValue(descRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return setDescriptions([]);
+
+      const list = Object.entries(data).map(([id, val]: [string, any]) => ({
+        id,
+        ...val,
+      }));
+
+      list.sort((a, b) => b.createdAt - a.createdAt);
+      setDescriptions(list);
+    });
+
+    return () => unsub();
+  }, [user]);
+  const handlePostDescription = async () => {
+  if (!descriptionMsg.trim()) return;
+
+  const now = Date.now();
+
+  await push(ref(db, "descriptions"), {
+    message: descriptionMsg,
+    createdAt: now,
+    expiresAt: now + 24 * 60 * 60 * 1000,
+  });
+
+  setDescriptionMsg("");
+};
+  const handleDeleteDescription = async (id: string) => {
+    await remove(ref(db, `descriptions/${id}`));
+  };
+  const handleEditDescription = (item: any) => {
+    setEditingDescId(item.id);
+    setEditDescText(item.message);
+  };
+  const handleSaveDescriptionEdit = async () => {
+    if (!editingDescId) return;
+
+    await update(ref(db, `descriptions/${editingDescId}`), {
+      message: editDescText,
+    });
+
+    setEditingDescId(null);
+    setEditDescText("");
+  };
   const handlePostUpdate = async () => {
     if (!updateMsg.trim()) return;
     setPosting(true);
@@ -163,60 +214,136 @@ const handleSaveEdit = async () => {
           <p className="text-xs text-muted-foreground mt-2">Update will expire after 24 hours.</p>
         </div>
         {/* Existing Updates */}
-<div className="bg-card border border-border rounded-xl p-6 mb-8">
-  <h3 className="font-bold text-sm mb-4">Posted Updates</h3>
+        <div className="bg-card border border-border rounded-xl p-6 mb-8">
+          <h3 className="font-bold text-sm mb-4">Posted Updates</h3>
 
-  {updates.length === 0 && (
-    <p className="text-sm text-muted-foreground">No updates posted yet.</p>
-  )}
-
-  <div className="space-y-4">
-    {updates.map((u) => (
-      <div
-        key={u.id}
-        className="border border-border rounded-lg p-4 flex justify-between items-start"
-      >
-        {editingId === u.id ? (
-          <div className="flex-1 mr-4">
-            <input
-              value={editText}
-              onChange={(e) => setEditText(e.target.value)}
-              className="w-full rounded-lg bg-muted px-3 py-2 text-sm"
-            />
-          </div>
-        ) : (
-          <p className="text-sm flex-1 mr-4">{u.message}</p>
-        )}
-
-        <div className="flex gap-2">
-          {editingId === u.id ? (
-            <button
-              onClick={handleSaveEdit}
-              className="text-xs bg-primary text-white px-3 py-1 rounded"
-            >
-              Save
-            </button>
-          ) : (
-            <button
-              onClick={() => handleEdit(u)}
-              className="text-xs bg-secondary px-3 py-1 rounded"
-            >
-              Edit
-            </button>
+          {updates.length === 0 && (
+            <p className="text-sm text-muted-foreground">No updates posted yet.</p>
           )}
 
-          <button
-            onClick={() => handleDelete(u.id)}
-            className="text-xs bg-destructive text-white px-3 py-1 rounded"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+          <div className="space-y-4">
+            {updates.map((u) => (
+              <div
+                key={u.id}
+                className="border border-border rounded-lg p-4 flex justify-between items-start"
+              >
+                {editingId === u.id ? (
+                  <div className="flex-1 mr-4">
+                    <input
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      className="w-full rounded-lg bg-muted px-3 py-2 text-sm"
+                    />
+                  </div>
+                ) : (
+                  <p className="text-sm flex-1 mr-4">{u.message}</p>
+                )}
 
+                <div className="flex gap-2">
+                  {editingId === u.id ? (
+                    <button
+                      onClick={handleSaveEdit}
+                      className="text-xs bg-primary text-white px-3 py-1 rounded"
+                    >
+                      Save
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleEdit(u)}
+                      className="text-xs bg-secondary px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => handleDelete(u.id)}
+                    className="text-xs bg-destructive text-white px-3 py-1 rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Post Daily Description */}
+        <div className="bg-card border border-border rounded-xl p-6 mb-8">
+          <h3 className="font-bold text-sm mb-3">Post Daily Description</h3>
+
+          <div className="flex gap-3">
+            <input
+              value={descriptionMsg}
+              onChange={(e) => setDescriptionMsg(e.target.value)}
+              placeholder="Type daily description..."
+              className="flex-1 rounded-lg bg-muted px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary"
+            />
+
+            <button
+              onClick={handlePostDescription}
+              className="bg-teal-dark text-accent-foreground font-bold text-sm px-6 py-3 rounded-lg hover:opacity-90"
+            >
+              Post
+            </button>
+          </div>
+
+          <p className="text-xs text-muted-foreground mt-2">
+            Description will expire after 24 hours.
+          </p>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-6 mb-8">
+          <h3 className="font-bold text-sm mb-4">Posted Descriptions</h3>
+
+          {descriptions.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              No descriptions posted yet.
+            </p>
+          )}
+
+          <div className="space-y-4">
+            {descriptions.map((d) => (
+              <div
+                key={d.id}
+                className="border border-border rounded-lg p-4 flex justify-between items-start"
+              >
+                {editingDescId === d.id ? (
+                  <input
+                    value={editDescText}
+                    onChange={(e) => setEditDescText(e.target.value)}
+                    className="flex-1 mr-4 rounded-lg bg-muted px-3 py-2 text-sm"
+                  />
+                ) : (
+                  <p className="flex-1 mr-4 text-sm">{d.message}</p>
+                )}
+
+                <div className="flex gap-2">
+                  {editingDescId === d.id ? (
+                    <button
+                      onClick={handleSaveDescriptionEdit}
+                      className="text-xs bg-primary text-white px-3 py-1 rounded"
+                    >
+                      Save
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleEditDescription(d)}
+                      className="text-xs bg-secondary px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => handleDeleteDescription(d.id)}
+                    className="text-xs bg-destructive text-white px-3 py-1 rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
         {/* Registrations Table */}
         <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="p-4 border-b border-border">
